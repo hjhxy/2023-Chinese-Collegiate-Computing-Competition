@@ -7,8 +7,8 @@ from PIL import Image
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 from tqdm import tqdm
-from utils.utils import cvtColor, get_classes, preprocess_input, resize_image
-from utils.utils_bbox import decode_outputs, non_max_suppression
+
+from utils.utils import cvtColor, preprocess_input, resize_image
 from yolo import YOLO
 
 #---------------------------------------------------------------------------#
@@ -32,7 +32,7 @@ class mAP_YOLO(YOLO):
     #---------------------------------------------------#
     #   检测图片
     #---------------------------------------------------#
-    def detect_image(self, image_id, image, results):
+    def detect_image(self, image_id, image, results, clsid2catid):
         #---------------------------------------------------#
         #   计算输入图片的高和宽
         #---------------------------------------------------#
@@ -60,11 +60,11 @@ class mAP_YOLO(YOLO):
             #   将图像输入网络当中进行预测！
             #---------------------------------------------------------#
             outputs = self.net(images)
-            outputs = decode_outputs(outputs, self.input_shape)
+            outputs = self.bbox_util.decode_box(outputs)
             #---------------------------------------------------------#
             #   将预测框进行堆叠，然后进行非极大抑制
             #---------------------------------------------------------#
-            outputs = non_max_suppression(outputs, self.num_classes, self.input_shape, 
+            outputs = self.bbox_util.non_max_suppression(torch.cat(outputs, 1), self.num_classes, self.input_shape, 
                         image_shape, self.letterbox_image, conf_thres = self.confidence, nms_thres = self.nms_iou)
                                                     
             if outputs[0] is None: 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
             for image_id in tqdm(ids):
                 image_path  = os.path.join(dataset_img_path, cocoGt.loadImgs(image_id)[0]['file_name'])
                 image       = Image.open(image_path)
-                results     = yolo.detect_image(image_id, image, results)
+                results     = yolo.detect_image(image_id, image, results, clsid2catid)
             json.dump(results, f)
 
     if map_mode == 0 or map_mode == 2:

@@ -1,3 +1,4 @@
+import datetime
 import os
 
 import torch
@@ -13,7 +14,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 from .utils import cvtColor, preprocess_input, resize_image
-from .utils_bbox import decode_outputs, non_max_suppression
+from .utils_bbox import DecodeBox
 from .utils_map import get_coco_map, get_map
 
 
@@ -77,12 +78,14 @@ class LossHistory():
         plt.close("all")
 
 class EvalCallback():
-    def __init__(self, net, input_shape, class_names, num_classes, val_lines, log_dir, cuda, \
+    def __init__(self, net, input_shape, anchors, anchors_mask, class_names, num_classes, val_lines, log_dir, cuda, \
             map_out_path=".temp_map_out", max_boxes=100, confidence=0.05, nms_iou=0.5, letterbox_image=True, MINOVERLAP=0.5, eval_flag=True, period=1):
         super(EvalCallback, self).__init__()
         
         self.net                = net
         self.input_shape        = input_shape
+        self.anchors            = anchors
+        self.anchors_mask       = anchors_mask
         self.class_names        = class_names
         self.num_classes        = num_classes
         self.val_lines          = val_lines
@@ -97,6 +100,8 @@ class EvalCallback():
         self.eval_flag          = eval_flag
         self.period             = period
         
+        self.bbox_util          = DecodeBox(self.anchors, self.num_classes, (self.input_shape[0], self.input_shape[1]), self.anchors_mask)
+        
         self.maps       = [0]
         self.epoches    = [0]
         if self.eval_flag:
@@ -105,7 +110,7 @@ class EvalCallback():
                 f.write("\n")
 
     def get_map_txt(self, image_id, image, class_names, map_out_path):
-        f = open(os.path.join(map_out_path, "detection-results/"+image_id+".txt"),"w") 
+        f = open(os.path.join(map_out_path, "detection-results/"+image_id+".txt"), "w", encoding='utf-8') 
         image_shape = np.array(np.shape(image)[0:2])
         #---------------------------------------------------------#
         #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
@@ -116,7 +121,7 @@ class EvalCallback():
         #   给图像增加灰条，实现不失真的resize
         #   也可以直接resize进行识别
         #---------------------------------------------------------#
-        image_data  = resize_image(image, (self.input_shape[1],self.input_shape[0]), self.letterbox_image)
+        image_data  = resize_image(image, (self.input_shape[1], self.input_shape[0]), self.letterbox_image)
         #---------------------------------------------------------#
         #   添加上batch_size维度
         #---------------------------------------------------------#
@@ -130,11 +135,11 @@ class EvalCallback():
             #   将图像输入网络当中进行预测！
             #---------------------------------------------------------#
             outputs = self.net(images)
-            outputs = decode_outputs(outputs, self.input_shape)
+            outputs = self.bbox_util.decode_box(outputs)
             #---------------------------------------------------------#
             #   将预测框进行堆叠，然后进行非极大抑制
             #---------------------------------------------------------#
-            results = non_max_suppression(outputs, self.num_classes, self.input_shape, 
+            results = self.bbox_util.non_max_suppression(torch.cat(outputs, 1), self.num_classes, self.input_shape, 
                         image_shape, self.letterbox_image, conf_thres = self.confidence, nms_thres = self.nms_iou)
                                                     
             if results[0] is None: 

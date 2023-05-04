@@ -111,24 +111,6 @@ def index():
                 introduction="我是超级管理员", isopend="1", permission="0")
     db.session.add(user)  #
     db.session.commit()  # 同步到数据库
-    # 2. get查找，根据主键查找
-    # user = db.session.get(User, 1)
-    # print(user.id, user.nickname, user.username)
-    # 3. filter_by，查找多条 QuerySet：类数组，可以做切片等操作
-    # user = User.query.filter_by(username="admin")
-    # 4. 查找所有数据 User.query.all
-    # 5. 查找第一条数据 user.query.first
-    # 6. 更新操作,都是操作对象
-    # user.nickname = '法外狂徒'
-    # db.session.commit()
-    # 7. 删除操作
-    # db.session.delete(user)
-    # db.session.commit()
-    # msg = Message(request_user_id='1', msg_type='text', msg_content='文本', msg_status='0', request_time='1956565656', handle_time='')
-    # db.session.add(msg)
-    # db.session.commit()
-    # users = User.query.all()
-    # print(users[0])
     return "hello flask"
 
 
@@ -143,6 +125,7 @@ def uploadimg():
     img_property = predict_img(path, filename)
     srcurl = "/static/img/" + filename
     url = "/static/resImg/" + filename
+    print(img_property)
 
     # 查找用户信息
     user = User.query.filter_by(username=username)
@@ -152,9 +135,9 @@ def uploadimg():
                              detail=jsonify(img_property))
         db.session.add(check)  #
         db.session.commit()  # 同步到数据库
-        return jsonify(
+        return jsonfy(
             {
-                "propties": img_property,
+                "proipties": img_property,
                 "url": url
             }
         )
@@ -371,12 +354,12 @@ def msgList():
         "data": {
             "items": [
                 {
-                    "nickname": "zs",
-                    "msg_type": "文本",
-                    "msg_content": "你好",
+                    "nickname": "李四",
+                    "msg_type": "2022-4-20",
+                    "msg_content": "裂缝已修复",
                     "msg_status": "待处理",
-                    "request_time": "2022-12-12",
-                    "handle_time": "2022-12-25"
+                    "request_time": "2023-4-18",
+                    "handle_time": "2023-4-21"
                 }
             ]
         },

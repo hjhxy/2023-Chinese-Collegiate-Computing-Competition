@@ -4,8 +4,7 @@ import torch
 from tqdm import tqdm
 
 from utils.utils import get_lr
-
-
+        
 def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callback, optimizer, epoch, epoch_step, epoch_step_val, gen, gen_val, Epoch, cuda, fp16, scaler, save_period, save_dir, local_rank=0):
     loss        = 0
     val_loss    = 0
@@ -22,7 +21,7 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
         with torch.no_grad():
             if cuda:
                 images  = images.cuda(local_rank)
-                targets = [ann.cuda(local_rank) for ann in targets]
+                targets = targets.cuda(local_rank)
         #----------------------#
         #   清零梯度
         #----------------------#
@@ -32,11 +31,7 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
             #   前向传播
             #----------------------#
             outputs         = model_train(images)
-
-            #----------------------#
-            #   计算损失
-            #----------------------#
-            loss_value = yolo_loss(outputs, targets)
+            loss_value      = yolo_loss(outputs, targets, images)
 
             #----------------------#
             #   反向传播
@@ -46,11 +41,11 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
         else:
             from torch.cuda.amp import autocast
             with autocast():
-                outputs = model_train(images)
                 #----------------------#
-                #   计算损失
+                #   前向传播
                 #----------------------#
-                loss_value = yolo_loss(outputs, targets)
+                outputs         = model_train(images)
+                loss_value      = yolo_loss(outputs, targets, images)
 
             #----------------------#
             #   反向传播
@@ -86,7 +81,7 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
         with torch.no_grad():
             if cuda:
                 images  = images.cuda(local_rank)
-                targets = [ann.cuda(local_rank) for ann in targets]
+                targets = targets.cuda(local_rank)
             #----------------------#
             #   清零梯度
             #----------------------#
@@ -95,17 +90,13 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
             #   前向传播
             #----------------------#
             outputs         = model_train_eval(images)
-
-            #----------------------#
-            #   计算损失
-            #----------------------#
-            loss_value = yolo_loss(outputs, targets)
+            loss_value      = yolo_loss(outputs, targets, images)
 
         val_loss += loss_value.item()
         if local_rank == 0:
             pbar.set_postfix(**{'val_loss': val_loss / (iteration + 1)})
             pbar.update(1)
-
+            
     if local_rank == 0:
         pbar.close()
         print('Finish Validation')
@@ -124,7 +115,7 @@ def fit_one_epoch(model_train, model, ema, yolo_loss, loss_history, eval_callbac
 
         if (epoch + 1) % save_period == 0 or epoch + 1 == Epoch:
             torch.save(save_state_dict, os.path.join(save_dir, "ep%03d-loss%.3f-val_loss%.3f.pth" % (epoch + 1, loss / epoch_step, val_loss / epoch_step_val)))
-
+            
         if len(loss_history.val_loss) <= 1 or (val_loss / epoch_step_val) <= min(loss_history.val_loss):
             print('Save best model to best_epoch_weights.pth')
             torch.save(save_state_dict, os.path.join(save_dir, "best_epoch_weights.pth"))

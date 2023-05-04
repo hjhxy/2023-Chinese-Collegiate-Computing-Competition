@@ -40,11 +40,16 @@ def get_classes(classes_path):
     class_names = [c.strip() for c in class_names]
     return class_names, len(class_names)
 
-def preprocess_input(image):
-    image /= 255.0
-    image -= np.array([0.485, 0.456, 0.406])
-    image /= np.array([0.229, 0.224, 0.225])
-    return image
+#---------------------------------------------------#
+#   获得先验框
+#---------------------------------------------------#
+def get_anchors(anchors_path):
+    '''loads the anchors from a file'''
+    with open(anchors_path, encoding='utf-8') as f:
+        anchors = f.readline()
+    anchors = [float(x) for x in anchors.split(',')]
+    anchors = np.array(anchors).reshape(-1, 2)
+    return anchors, len(anchors)
 
 #---------------------------------------------------#
 #   获得学习率
@@ -52,6 +57,10 @@ def preprocess_input(image):
 def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         return param_group['lr']
+
+def preprocess_input(image):
+    image /= 255.0
+    return image
 
 def show_config(**kwargs):
     print('Configurations:')
@@ -61,4 +70,13 @@ def show_config(**kwargs):
     for key, value in kwargs.items():
         print('|%25s | %40s|' % (str(key), str(value)))
     print('-' * 70)
+        
+def download_weights(phi, model_dir="./model_data"):
+    import os
+    from torch.hub import load_state_dict_from_url
     
+    url = 'https://github.com/bubbliiiing/yolov7-pytorch/releases/download/v1.0/yolov7_tiny_backbone_weights.pth'
+    
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    load_state_dict_from_url(url, model_dir)

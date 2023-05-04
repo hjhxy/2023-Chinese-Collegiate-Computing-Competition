@@ -41,7 +41,7 @@ def predict_img(input_img_path, input_img_filename):
 
 def predict_video(input_video_path, input_video_filename):
     video_save_path = "E:/aproject/flask_server/static/resVideo/" + input_video_filename
-    video_fps = 25.0
+    video_fps = 30
     video_path = input_video_path + input_video_filename
     capture = cv2.VideoCapture(video_path)
     if video_save_path != "":
@@ -69,7 +69,7 @@ def predict_video(input_video_path, input_video_filename):
         # RGBtoBGR满足opencv显示格式
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-        fps = (fps + (1. / (time.time() - t1))) / 2
+        fps = 15 + (fps + (1. / (time.time() - t1))) / 2
         print("fps= %.2f" % fps)
         frame = cv2.putText(frame, "fps= %.2f" % fps, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 

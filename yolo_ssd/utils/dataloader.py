@@ -10,12 +10,14 @@ from utils.utils import cvtColor, preprocess_input
 
 
 class YoloDataset(Dataset):
-    def __init__(self, annotation_lines, input_shape, num_classes, epoch_length, \
+    def __init__(self, annotation_lines, input_shape, num_classes, anchors, anchors_mask, epoch_length, \
                         mosaic, mixup, mosaic_prob, mixup_prob, train, special_aug_ratio = 0.7):
         super(YoloDataset, self).__init__()
         self.annotation_lines   = annotation_lines
         self.input_shape        = input_shape
         self.num_classes        = num_classes
+        self.anchors            = anchors
+        self.anchors_mask       = anchors_mask
         self.epoch_length       = epoch_length
         self.mosaic             = mosaic
         self.mosaic_prob        = mosaic_prob
@@ -26,13 +28,15 @@ class YoloDataset(Dataset):
 
         self.epoch_now          = -1
         self.length             = len(self.annotation_lines)
+        
+        self.bbox_attrs         = 5 + num_classes
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, index):
-        index = index % self.length
-        
+        index       = index % self.length
+
         #---------------------------------------------------#
         #   训练时进行数据的随机增强
         #   验证时不进行数据的随机增强
@@ -52,10 +56,34 @@ class YoloDataset(Dataset):
 
         image       = np.transpose(preprocess_input(np.array(image, dtype=np.float32)), (2, 0, 1))
         box         = np.array(box, dtype=np.float32)
-        if len(box) != 0:
+        
+        #---------------------------------------------------#
+        #   对真实框进行预处理
+        #---------------------------------------------------#
+        nL          = len(box)
+        labels_out  = np.zeros((nL, 6))
+        if nL:
+            #---------------------------------------------------#
+            #   对真实框进行归一化，调整到0-1之间
+            #---------------------------------------------------#
+            box[:, [0, 2]] = box[:, [0, 2]] / self.input_shape[1]
+            box[:, [1, 3]] = box[:, [1, 3]] / self.input_shape[0]
+            #---------------------------------------------------#
+            #   序号为0、1的部分，为真实框的中心
+            #   序号为2、3的部分，为真实框的宽高
+            #   序号为4的部分，为真实框的种类
+            #---------------------------------------------------#
             box[:, 2:4] = box[:, 2:4] - box[:, 0:2]
             box[:, 0:2] = box[:, 0:2] + box[:, 2:4] / 2
-        return image, box
+            
+            #---------------------------------------------------#
+            #   调整顺序，符合训练的格式
+            #   labels_out中序号为0的部分在collect时处理
+            #---------------------------------------------------#
+            labels_out[:, 1] = box[:, -1]
+            labels_out[:, 2:] = box[:, :4]
+            
+        return image, labels_out
 
     def rand(self, a=0, b=1):
         return np.random.rand()*(b-a) + a
@@ -361,14 +389,17 @@ class YoloDataset(Dataset):
         else:
             new_boxes = np.concatenate([box_1, box_2], axis=0)
         return new_image, new_boxes
-
+    
+    
 # DataLoader中collate_fn使用
 def yolo_dataset_collate(batch):
-    images = []
-    bboxes = []
-    for img, box in batch:
+    images  = []
+    bboxes  = []
+    for i, (img, box) in enumerate(batch):
         images.append(img)
+        box[:, 0] = i
         bboxes.append(box)
-    images = torch.from_numpy(np.array(images)).type(torch.FloatTensor)
-    bboxes = [torch.from_numpy(ann).type(torch.FloatTensor) for ann in bboxes]
+            
+    images  = torch.from_numpy(np.array(images)).type(torch.FloatTensor)
+    bboxes  = torch.from_numpy(np.concatenate(bboxes, 0)).type(torch.FloatTensor)
     return images, bboxes

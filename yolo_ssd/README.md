@@ -1,25 +1,19 @@
-## YOLOX：You Only Look Once目标检测模型在Pytorch当中的实现
+## YOLOV7-tiny：You Only Look Once目标检测模型在pytorch当中的实现
 ---
 
 ## 目录
 1. [仓库更新 Top News](#仓库更新)
 2. [相关仓库 Related code](#相关仓库)
 3. [性能情况 Performance](#性能情况)
-4. [实现的内容 Achievement](#实现的内容)
-5. [所需环境 Environment](#所需环境)
-6. [文件下载 Download](#文件下载)
-7. [训练步骤 How2train](#训练步骤)
-8. [预测步骤 How2predict](#预测步骤)
-9. [评估步骤 How2eval](#评估步骤)
-10. [参考资料 Reference](#Reference)
+4. [所需环境 Environment](#所需环境)
+5. [文件下载 Download](#文件下载)
+6. [训练步骤 How2train](#训练步骤)
+7. [预测步骤 How2predict](#预测步骤)
+8. [评估步骤 How2eval](#评估步骤)
+9. [参考资料 Reference](#Reference)
 
 ## Top News
-**`2022-04`**:**支持多GPU训练，新增各个种类目标数量计算，新增heatmap。**  
-
-**`2022-03`**:**进行了大幅度的更新，支持step、cos学习率下降法、支持adam、sgd优化器选择、支持学习率根据batch_size自适应调整、新增图片裁剪。**  
-BiliBili视频中的原仓库地址为：https://github.com/bubbliiiing/yolox-pytorch/tree/bilibili
-
-**`2021-10`**:**创建仓库，支持不同尺寸模型训练、支持大量可调整参数，支持fps、视频预测、批量预测等功能。**   
+**`2022-08`**:**仓库创建，支持step、cos学习率下降法、支持adam、sgd优化器选择、支持学习率根据batch_size自适应调整、新增图片裁剪、支持多GPU训练、支持各个种类目标数量计算、支持heatmap、支持EMA。**  
 
 ## 相关仓库
 | 模型 | 路径 |
@@ -38,31 +32,25 @@ YoloV7-tiny | https://github.com/bubbliiiing/yolov7-tiny-pytorch
 ## 性能情况
 | 训练数据集 | 权值文件名称 | 测试数据集 | 输入图片大小 | mAP 0.5:0.95 | mAP 0.5 |
 | :-----: | :-----: | :------: | :------: | :------: | :-----: |
-| COCO-Train2017 | [yolox_nano.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_nano.pth) | COCO-Val2017 | 640x640 | 27.4 | 44.5
-| COCO-Train2017 | [yolox_tiny.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_tiny.pth) | COCO-Val2017 | 640x640 | 34.7 | 53.6
-| COCO-Train2017 | [yolox_s.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_s.pth) | COCO-Val2017 | 640x640 | 38.2 | 57.7
-| COCO-Train2017 | [yolox_m.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_m.pth) | COCO-Val2017 | 640x640 | 44.8 | 63.9
-| COCO-Train2017 | [yolox_l.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_l.pth) | COCO-Val2017 | 640x640 | 47.9 | 66.6
-| COCO-Train2017 | [yolox_x.pth](https://github.com/bubbliiiing/yolox-pytorch/releases/download/v1.0/yolox_x.pth) | COCO-Val2017 | 640x640 | 49.0 | 67.7
+| COCO-Train2017 | [yolov7_tiny_weights.pth](https://github.com/bubbliiiing/yolov7-tiny-pytorch/releases/download/v1.0/yolov7_tiny_weights.pth) | COCO-Val2017 | 640x640 | 36.8 | 54.4
 
-## 实现的内容
-- [x] 主干特征提取网络：使用了Focus网络结构。  
-- [x] 分类回归层：Decoupled Head，在YoloX中，Yolo Head被分为了分类回归两部分，最后预测的时候才整合在一起。
-- [x] 训练用到的小技巧：Mosaic数据增强、IOU和GIOU、学习率余弦退火衰减。
-- [x] Anchor Free：不使用先验框
-- [x] SimOTA：为不同大小的目标动态匹配正样本。
+yolov7_tiny精度不如论文，具体可参考该issue：https://github.com/WongKinYiu/yolov7/issues/106  
+主要原因我认为有两点：   
+1. 使用的激活函数不同。   
+2. 使用的anchors不同。   
 
 ## 所需环境
-pytorch==1.2.0
+torch==1.2.0    
+为了使用amp混合精度，推荐使用torch1.7.1以上的版本。
 
 ## 文件下载
-训练所需的权值可在百度网盘中下载。  
-链接: https://pan.baidu.com/s/1bi2UBwwIHES0OpLeyYuBFg    
-提取码: f4ni    
- 
+训练所需的权值可在百度网盘中下载。   
+链接: https://pan.baidu.com/s/1gSC4jYYpMfWl90zTK0dI4w    
+提取码: x39a     
+
 VOC数据集下载地址如下，里面已经包括了训练集、测试集、验证集（与测试集一样），无需再次划分：  
-链接: https://pan.baidu.com/s/1YuBbBKxm2FGgTU5OfaeC5A    
-提取码: uack   
+链接: https://pan.baidu.com/s/19Mw2u_df_nBzsC2lg20fQA    
+提取码: j5ge   
 
 ## 训练步骤
 ### a、训练VOC07+12数据集
@@ -112,7 +100,7 @@ classes_path指向检测类别所对应的txt。**
 
 ## 预测步骤
 ### a、使用预训练权重
-1. 下载完库后解压，在百度网盘下载yolo_weights.pth，放入model_data，运行predict.py，输入  
+1. 下载完库后解压，在百度网盘下载权值，放入model_data，运行predict.py，输入  
 ```python
 img/street.jpg
 ```
@@ -125,18 +113,23 @@ _defaults = {
     #--------------------------------------------------------------------------#
     #   使用自己训练好的模型进行预测一定要修改model_path和classes_path！
     #   model_path指向logs文件夹下的权值文件，classes_path指向model_data下的txt
+    #
+    #   训练好后logs文件夹下存在多个权值文件，选择验证集损失较低的即可。
+    #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
     #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
     #--------------------------------------------------------------------------#
-    "model_path"        : 'model_data/yolox_s.pth',
+    "model_path"        : 'model_data/yolov7_tiny_weights.pth',
     "classes_path"      : 'model_data/coco_classes.txt',
+    #---------------------------------------------------------------------#
+    #   anchors_path代表先验框对应的txt文件，一般不修改。
+    #   anchors_mask用于帮助代码找到对应的先验框，一般不修改。
+    #---------------------------------------------------------------------#
+    "anchors_path"      : 'model_data/yolo_anchors.txt',
+    "anchors_mask"      : [[6, 7, 8], [3, 4, 5], [0, 1, 2]],
     #---------------------------------------------------------------------#
     #   输入图片的大小，必须为32的倍数。
     #---------------------------------------------------------------------#
     "input_shape"       : [640, 640],
-    #---------------------------------------------------------------------#
-    #   所使用的YoloX的版本。nano、tiny、s、m、l、x
-    #---------------------------------------------------------------------#
-    "phi"               : 's',
     #---------------------------------------------------------------------#
     #   只有得分大于置信度的预测框会被保留下来
     #---------------------------------------------------------------------#
@@ -177,4 +170,4 @@ img/street.jpg
 5. 运行get_map.py即可获得评估结果，评估结果会保存在map_out文件夹中。
 
 ## Reference
-https://github.com/Megvii-BaseDetection/YOLOX
+https://github.com/WongKinYiu/yolov7
