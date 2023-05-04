@@ -1,0 +1,11 @@
+.choose_button{
+    width: fit-content;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #0173e7;
+    color: #fff;
+    &:hover {
+      background-color: #1687ff;
+      cursor: pointer;
+    }
+}

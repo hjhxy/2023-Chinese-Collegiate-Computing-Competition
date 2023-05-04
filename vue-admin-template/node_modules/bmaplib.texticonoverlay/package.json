@@ -1,0 +1,26 @@
+{
+  "name": "bmaplib.texticonoverlay",
+  "version": "1.0.2",
+  "description": "A library of Baidu Map JS API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dafrok/BMapLib.TextIconOverlay.git"
+  },
+  "author": "Dafrok <o.o@mug.dog>",
+  "license": "MIT",
+  "keywords": [
+    "baidu",
+    "baidu-map",
+    "text",
+    "icon",
+    "overlay"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dafrok/BMapLib.TextIconOverlay/issues"
+  },
+  "homepage": "https://github.com/Dafrok/BMapLib.TextIconOverlay#readme"
+}

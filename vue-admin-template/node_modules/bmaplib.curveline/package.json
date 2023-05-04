@@ -1,0 +1,26 @@
+{
+  "name": "bmaplib.curveline",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dafrok/BMapLib.CurveLine.git"
+  },
+  "author": "Dafrok <o.o@mug.dog>",
+  "license": "MIT",
+  "keywords": [
+    "baidu",
+    "map",
+    "baidu-map",
+    "curve",
+    "line"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dafrok/BMapLib.CurveLine/issues"
+  },
+  "homepage": "https://github.com/Dafrok/BMapLib.CurveLine#readme"
+}

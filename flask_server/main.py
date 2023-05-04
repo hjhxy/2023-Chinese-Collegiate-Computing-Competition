@@ -135,9 +135,9 @@ def uploadimg():
                              detail=jsonify(img_property))
         db.session.add(check)  #
         db.session.commit()  # 同步到数据库
-        return jsonfy(
+        return jsonify(
             {
-                "proipties": img_property,
+                "propties": img_property,
                 "url": url
             }
         )
@@ -150,10 +150,11 @@ def uploadvideo():
     video = request.files['file']
     randomnum = random.randint(pow(10, 8) - 1, pow(10, 10) - 1)
     path = basedir + "\\static\\video\\"
+    savepath = basedir + "\\static\\resVideo\\"
     filename = str(randomnum) + video.filename
     video.save(path + "\\" + filename)
 
-    result_video = predict_video(path, filename)
+    result_video = predict_video(savepath, path, filename)
     srcurl = "/static/video/" + filename
     url = "/static/resVideo/" + filename
 

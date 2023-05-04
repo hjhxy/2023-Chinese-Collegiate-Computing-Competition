@@ -1,0 +1,41 @@
+{
+  "name": "bmaplib.markerclusterer",
+  "version": "1.0.13",
+  "description": "A library of Baidu Map JS API",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dafrok/BMapLib.MarkerClusterer.git"
+  },
+  "keywords": [
+    "baidu",
+    "baidu-map",
+    "marker cluster",
+    "marker",
+    "cluster"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dafrok/BMapLib.MarkerClusterer/issues"
+  },
+  "homepage": "https://github.com/Dafrok/BMapLib.MarkerClusterer#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.9.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "babel-runtime": "^6.26.0",
+    "rollup": "^0.49.3",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-commonjs": "^2.2.1",
+    "rollup-plugin-node-resolve": "^1.5.0",
+    "rollup-plugin-replace": "^1.2.1"
+  },
+  "dependencies": {
+    "bmaplib.texticonoverlay": "^1.0.2"
+  }
+}

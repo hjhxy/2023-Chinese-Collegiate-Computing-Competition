@@ -39,8 +39,8 @@ def predict_img(input_img_path, input_img_filename):
     return img_property
 
 
-def predict_video(input_video_path, input_video_filename):
-    video_save_path = "E:/aproject/flask_server/static/resVideo/" + input_video_filename
+def predict_video(save_video_path, input_video_path, input_video_filename):
+    video_save_path = save_video_path + input_video_filename
     video_fps = 30
     video_path = input_video_path + input_video_filename
     capture = cv2.VideoCapture(video_path)

@@ -1,0 +1,25 @@
+{
+  "name": "bmaplib.heatmap",
+  "version": "1.0.4",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dafrok/BMapLib.Heatmap.git"
+  },
+  "author": "Dafrok <o.o@mug.dog>",
+  "license": "MIT",
+  "keywords": [
+    "baidu",
+    "map",
+    "baidu-map",
+    "heatmap"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dafrok/BMapLib.Heatmap/issues"
+  },
+  "homepage": "https://github.com/Dafrok/BMapLib.Heatmap#readme"
+}
