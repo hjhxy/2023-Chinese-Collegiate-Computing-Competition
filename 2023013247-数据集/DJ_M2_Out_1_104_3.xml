@@ -1,0 +1,26 @@
+<annotation>
+	<folder>计设-裂缝（切片、已清除）</folder>
+	<filename>DJ_M2_Out_1_104_3.jpg</filename>
+	<path>C:\Users\lenovo\Desktop\何昕宇\计设-裂缝（切片、已清除）\DJ_M2_Out_1_104_3.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>640</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>TransverseCrack</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1</xmin>
+			<ymin>22</ymin>
+			<xmax>640</xmax>
+			<ymax>115</ymax>
+		</bndbox>
+	</object>
+</annotation>
