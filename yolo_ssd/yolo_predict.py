@@ -20,7 +20,7 @@ import json
 yolo = YOLO()
 
 
-def predict_img(input_img_path, input_img_filename):
+def predict_img(save_img_path, input_img_path, input_img_filename):
     image_path = input_img_path + input_img_filename
     image = Image.open(image_path)
     print(image_path)
@@ -34,7 +34,7 @@ def predict_img(input_img_path, input_img_filename):
                     'Address': address}
 
     r_image = yolo.detect_image(image, crop=False, count=False)
-    r_image_path = "E:/aproject/flask_server/static/resImg/" + input_img_filename
+    r_image_path = save_img_path + input_img_filename
     r_image.save(r_image_path, quality=95, subsampling=0)
     return img_property
 

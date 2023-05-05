@@ -119,10 +119,11 @@ def uploadimg():
     img = request.files['file']
     randomnum = random.randint(pow(10, 8) - 1, pow(10, 10) - 1)
     path = basedir + "\\static\\img\\"
+    savepath = basedir + "\\static\\resImg\\"
     filename = str(randomnum) + img.filename
     img.save(path + "\\" + filename)
 
-    img_property = predict_img(path, filename)
+    img_property = predict_img(savepath, path, filename)
     srcurl = "/static/img/" + filename
     url = "/static/resImg/" + filename
     print(img_property)

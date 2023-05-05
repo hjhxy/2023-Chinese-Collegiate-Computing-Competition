@@ -1,7 +1,7 @@
 import colorsys
 import os
 import time
-
+import os.path
 import numpy as np
 import torch
 import torch.nn as nn
@@ -13,6 +13,7 @@ from yolo_ssd.utils.utils import (cvtColor, get_anchors, get_classes, preprocess
                          resize_image, show_config)
 from yolo_ssd.utils.utils_bbox import DecodeBox, DecodeBoxNP
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 '''
 训练自己的数据集必看注释！
 '''
@@ -26,13 +27,13 @@ class YOLO(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : 'E:/aproject/yolo_ssd/logs/best_epoch_weights.pth',
-        "classes_path"      : 'E:/aproject/yolo_ssd/model_data/Crack2Cls.txt',
+        "model_path"        : basedir + '/logs/best_epoch_weights.pth',
+        "classes_path"      : basedir + '/model_data/Crack2Cls.txt',
         #---------------------------------------------------------------------#
         #   anchors_path代表先验框对应的txt文件，一般不修改。
         #   anchors_mask用于帮助代码找到对应的先验框，一般不修改。
         #---------------------------------------------------------------------#
-        "anchors_path"      : 'E:/aproject/yolo_ssd/model_data/yolo_anchors.txt',
+        "anchors_path"      : basedir + '/model_data/yolo_anchors.txt',
         "anchors_mask"      : [[6, 7, 8], [3, 4, 5], [0, 1, 2]],
         #---------------------------------------------------------------------#
         #   输入图片的大小，必须为32的倍数。
